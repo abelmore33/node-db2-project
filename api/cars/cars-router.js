@@ -33,7 +33,7 @@ router.get("/:id", checkCarId, (req, res, next) => {
 router.post(
   "/",
   checkCarPayload,
-  //   checkVinNumberValid,
+  checkVinNumberValid,
   checkVinNumberUnique,
   (req, res, next) => {
     Cars.create(req.body)
