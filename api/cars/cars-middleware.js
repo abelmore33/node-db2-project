@@ -51,16 +51,21 @@ exports.checkVinNumberValid = (req, res, next) => {
   }
 };
 
-exports.checkVinNumberUnique = async (req, res, next) => {
+exports.checkVinNumberUnique = (req, res, next) => {
   // DO YOUR MAGIC
-  const { vin } = req.body;
-  const duplicateCheck = await db("cars").where("vin", vin).first();
 
-  if (vin === duplicateCheck.vin) {
-    res.status(400).json({
-      message: `vin ${vin} already exists`,
+  const { vin } = req.body;
+  Cars.getByVin(vin)
+    .then((data) => {
+      if (data) {
+        res.status(400).json({
+          message: `vin ${vin} already exists`,
+        });
+      } else {
+        next();
+      }
+    })
+    .catch((err) => {
+      next(err);
     });
-  } else {
-    next();
-  }
 };
