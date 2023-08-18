@@ -1,5 +1,6 @@
 const Cars = require("./cars-model");
 const vinValidator = require("vin-validator");
+const db = require("../../data/db-config");
 
 exports.checkCarId = (req, res, next) => {
   Cars.getById(req.params.id).then((data) => {
@@ -50,7 +51,16 @@ exports.checkVinNumberValid = (req, res, next) => {
   }
 };
 
-const checkVinNumberUnique = (req, res, next) => {
+exports.checkVinNumberUnique = async (req, res, next) => {
   // DO YOUR MAGIC
   const { vin } = req.body;
+  const duplicateCheck = await db("cars").where("vin", vin).first();
+
+  if (vin === duplicateCheck.vin) {
+    res.status(400).json({
+      message: `vin ${vin} already exists`,
+    });
+  } else {
+    next();
+  }
 };

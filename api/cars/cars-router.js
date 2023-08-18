@@ -7,6 +7,7 @@ const {
   checkCarPayload,
   checkCarId,
   checkVinNumberValid,
+  checkVinNumberUnique,
 } = require("./cars-middleware");
 
 const router = express.Router();
@@ -29,13 +30,19 @@ router.get("/:id", checkCarId, (req, res, next) => {
     .catch((err) => next(err));
 });
 
-router.post("/", checkCarPayload, checkVinNumberValid, (req, res, next) => {
-  Cars.create(req.body)
-    .then((data) => {
-      res.json(data);
-    })
-    .catch((err) => {
-      next();
-    });
-});
+router.post(
+  "/",
+  checkCarPayload,
+  //   checkVinNumberValid,
+  checkVinNumberUnique,
+  (req, res, next) => {
+    Cars.create(req.body)
+      .then((data) => {
+        res.json(data);
+      })
+      .catch((err) => {
+        next();
+      });
+  }
+);
 module.exports = router;
